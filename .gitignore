@@ -42,3 +42,8 @@ Thumbs.db
 
 # Backups compactados originais
 TrustCore/
+
+# Railway & Local tooling
+.railway/
+scratch/
+
