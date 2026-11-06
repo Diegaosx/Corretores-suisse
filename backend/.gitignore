@@ -24,8 +24,7 @@ yarn-error.log
 # General Node/Composer/PHP ignores
 node_modules/
 vendor/
-composer.lock
-yarn.lock
+
 npm-debug.log*
 *.log
 .DS_Store

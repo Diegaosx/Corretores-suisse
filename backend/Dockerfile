@@ -37,7 +37,7 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copiar arquivos de dependência primeiro para aproveitar cache de build
-COPY composer.json composer.lock ./
+COPY composer.json composer.lock* ./
 
 # Instalar dependências PHP
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
