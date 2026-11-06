@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "786192492830",
+    "project_id": "anitta-e82d3",
+    "storage_bucket": "anitta-e82d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786192492830:android:207cad0cc29e2cbf0c010f",
+        "android_client_info": {
+          "package_name": "ch.neotralo.anitta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw-jY-tr-NRldl6-6mUHZEKUHj7YKkDLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786192492830:android:1a5b81598f2a13ed0c010f",
+        "android_client_info": {
+          "package_name": "com.anitta.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw-jY-tr-NRldl6-6mUHZEKUHj7YKkDLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

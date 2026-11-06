@@ -1,0 +1,102 @@
+{
+    "id": {
+        "fr": "id",
+        "de": "id",
+        "it": "id"
+    },
+    "meta_title": {
+        "fr": "titre_meta",
+        "de": "meta_titel",
+        "it": "titolo_meta"
+    },
+    "collection_id": {
+        "fr": "id_collection",
+        "de": "sammlungs_id",
+        "it": "id_collezione"
+    },
+    "created_at": {
+        "fr": "créé_le",
+        "de": "erstellt_am",
+        "it": "creato_il"
+    },
+    "updated_at": {
+        "fr": "mis_à_jour_le",
+        "de": "aktualisiert_am",
+        "it": "aggiornato_il"
+    },
+    "rel_company_col_insurance_companies": {
+        "fr": "rel_compagnie_col_compagnies_assurance",
+        "de": "rel_unternehmen_col_versicherungsgesellschaften",
+        "it": "rel_azienda_col_compagnie_assicurative"
+    },
+    "date_come_into_effect_req": {
+        "fr": "date_entrée_en_vigueur_req",
+        "de": "datum_inkrafttreten_req",
+        "it": "data_entrata_in_vigore_req"
+    },
+    "text_legal_representative_tel": {
+        "fr": "texte_téléphone_représentant_légal",
+        "de": "text_telefon_gesetzlicher_vertreter",
+        "it": "testo_telefono_rappresentante_legale"
+    },
+    "rel_basic_insurance_kvg_col_insurance_type": {
+        "fr": "rel_assurance_base_kvg_col_type_assurance",
+        "de": "rel_grundversicherung_kvg_col_versicherungstyp",
+        "it": "rel_assicurazione_base_kvg_col_tipo_assicurazione"
+    },
+    "rel_health_insurance_col_health_insurer": {
+        "fr": "rel_assurance_maladie_col_assureur_santé",
+        "de": "rel_krankenversicherung_col_gesundheitsversicherer",
+        "it": "rel_assicurazione_sanitaria_col_assicuratore_sanitario"
+    },
+    "date_entry_into_force_vvg": {
+        "fr": "date_entrée_en_vigueur_vvg",
+        "de": "datum_inkrafttreten_vvg",
+        "it": "data_entrata_in_vigore_vvg"
+    },
+    "rel_payment_method_col_payment_method": {
+        "fr": "rel_méthode_paiement_col_méthode_paiement",
+        "de": "rel_zahlungsmethode_col_zahlungsmethode",
+        "it": "rel_metodo_pagamento_col_metodo_pagamento"
+    },
+    "rel_invoicing_col_invoicing": {
+        "fr": "rel_facturation_col_facturation",
+        "de": "rel_rechnungsstellung_col_rechnungsstellung",
+        "it": "rel_fatturazione_col_fatturazione"
+    },
+    "text_flow_url_req": {
+        "fr": "texte_url_flux_req",
+        "de": "text_flow_url_req",
+        "it": "testo_url_flusso_req"
+    },
+    "rel_franchise_data_col_franchise_data": {
+        "fr": "rel_données_franchise_col_données_franchise",
+        "de": "rel_franchise_daten_col_franchise_daten",
+        "it": "rel_dati_franchigia_col_dati_franchigia"
+    },
+    "rel_foreign_insurance_country_col_country": {
+        "fr": "rel_pays_assurance_étrangère_col_pays",
+        "de": "rel_ausland_versicherung_land_col_land",
+        "it": "rel_paese_assicurazione_estera_col_paese"
+    },
+    "rel_accidental_coverage_col_boolean": {
+        "fr": "rel_couverture_accident_col_booléen",
+        "de": "rel_unfallschutz_col_boolean",
+        "it": "rel_copertura_incidente_col_boolean"
+    },
+    "rel_occupational_status_req_col_occupational_status": {
+        "fr": "rel_statut_professionnel_req_col_statut_professionnel",
+        "de": "rel_berufsstatus_req_col_berufsstatus",
+        "it": "rel_stato_professionale_req_col_stato_professionale"
+    },
+    "text_other_occupational_data": {
+        "fr": "texte_autres_données_professionnelles",
+        "de": "text_andere_berufsdaten",
+        "it": "testo_altri_dati_professionali"
+    },
+    "textarea_template_description": {
+        "fr": "description_modèle_zone_texte",
+        "de": "vorlagenbeschreibung_textbereich",
+        "it": "descrizione_modello_area_testo"
+    }
+}

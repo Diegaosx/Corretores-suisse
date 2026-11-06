@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Disable caching for HTML files (so index.html is always fresh)
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+
+  # Enable long caching for assets (since Angular uses hashed file names)
+  <FilesMatch "\.(js|css|png|jpg|gif|ico|svg|woff|woff2|ttf|otf|eot)$">
+    Header set Cache-Control "max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

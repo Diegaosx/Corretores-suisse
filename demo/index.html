@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustCore Suisse & Anitta AI — Demonstração Interativa & Simulador</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            outfit: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            swiss: {
+              red: '#DC2626',
+              darkred: '#991B1B',
+              flag: '#FF0000',
+              accent: '#E11D48',
+            },
+            trust: {
+              50: '#F0F9FF',
+              100: '#E0F2FE',
+              500: '#0EA5E9',
+              600: '#0284C7',
+              700: '#0369A1',
+              900: '#0C4A6E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    /* Waveform Animation */
+    .wave-bar {
+      transition: height 0.08s ease;
+      animation: wave-pulse 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes wave-pulse {
+      0% { height: 6px; }
+      50% { height: 28px; }
+      100% { height: 12px; }
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.25s; }
+    .wave-bar:nth-child(7) { animation-delay: 0.5s; }
+    .wave-bar:nth-child(8) { animation-delay: 0.1s; }
+
+    /* Pulse Glow */
+    .glow-red {
+      box-shadow: 0 0 25px rgba(220, 38, 38, 0.4);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.3);
+    }
+
+    /* Phone Mockup Frame */
+    .iphone-frame {
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 2px rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased overflow-x-hidden selection:bg-red-600 selection:text-white">
+
+  <!-- TOP HEADER / NAV BAR -->
+  <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Switzerland Tag -->
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-600/30 text-lg">
+          🇨🇭
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-outfit font-bold text-lg text-white tracking-tight">TrustCore<span class="text-red-500">Suisse</span></span>
+            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700 font-mono">v2.4 Pro</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Swiss Health Insurance Broker Platform & Anitta AI</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="hidden md:flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+        <button onclick="switchTab('dual')" id="tab-btn-dual" class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all bg-red-600 text-white shadow">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+          <span>Cockpit Duplo</span>
+        </button>
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all text-slate-400 hover:text-white">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Painel Web (TrustCore)</span>
+        </button>
+        <button onclick="switchTab('mobile')" id="tab-btn-mobile" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all text-slate-400 hover:text-white">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+          <span>App Anitta (Voz & IA)</span>
+        </button>
+        <button onclick="switchTab('rpa')" id="tab-btn-rpa" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all text-slate-400 hover:text-white">
+          <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+          <span>Robô RPA & OTP</span>
+        </button>
+        <button onclick="switchTab('railway')" id="tab-btn-railway" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all text-slate-400 hover:text-white">
+          <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
+          <span>Deploy Railway</span>
+        </button>
+      </div>
+
+      <!-- Right Quick Info & Speech Toggle -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Simulação Ativa</span>
+        </div>
+        
+        <button onclick="toggleVoiceAudio()" id="voice-toggle-btn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center space-x-1 border border-slate-700 transition" title="Alternar voz falada da Anitta">
+          <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400" id="audio-icon"></i>
+          <span class="hidden sm:inline text-[11px]" id="audio-status-label">Voz Ativada</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- BANNER ALERT: EXPLANATION OF DEMO MODE -->
+  <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-800 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-slate-300 gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="px-2 py-0.5 rounded bg-red-600/20 text-red-400 font-semibold border border-red-500/30 text-[10px] uppercase tracking-wider">Demo Interativa</span>
+        <span>Você está no ambiente de demonstração e simulação integrada do <strong>TrustCore (Web)</strong> + <strong>Anitta (Mobile)</strong> + <strong>Robô RPA</strong>.</span>
+      </div>
+      <div class="flex items-center space-x-3 text-slate-400 font-mono text-[11px]">
+        <span>🇨🇭 Zurique: <span id="zurich-clock" class="text-white font-medium">14:30:15</span></span>
+        <span>•</span>
+        <span class="text-cyan-400">Pronto p/ Railway</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: COCKPIT DUPLO (LADO A LADO: DASHBOARD + MOBILE) -->
+    <!-- ======================================================== -->
+    <section id="view-dual" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-800">
+        <div>
+          <h1 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span>Visão Integrada: Corretor & Assistente de Voz</span>
+            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">Dual Sync</span>
+          </h1>
+          <p class="text-xs text-slate-400 mt-0.5">Fale ou comande pelo aplicativo móvel da Anitta e veja o Dashboard do TrustCore atualizar e disparar a proposta em tempo real.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="triggerQuickScenario('swica')" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
+            <i data-lucide="play" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Simular Cotação Swica</span>
+          </button>
+          <button onclick="triggerQuickScenario('groupe')" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
+            <i data-lucide="play" class="w-3.5 h-3.5 text-blue-400"></i>
+            <span>Simular Groupe Mutuel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid Dual Screen -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Web Dashboard Compact View (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5">
+              <span class="text-[11px] text-slate-400 font-medium">Propostas Mês</span>
+              <div class="text-xl font-bold text-white mt-1 flex items-baseline justify-between">
+                <span id="metric-offers-count">52</span>
+                <span class="text-[10px] text-emerald-400 font-mono">+18%</span>
+              </div>
+              <span class="text-[10px] text-slate-500">40 emitidas via RPA</span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5">
+              <span class="text-[11px] text-slate-400 font-medium">Prêmio Médio</span>
+              <div class="text-xl font-bold text-white mt-1 flex items-baseline justify-between">
+                <span>CHF 328</span>
+                <span class="text-[10px] text-cyan-400 font-mono">LAMal</span>
+              </div>
+              <span class="text-[10px] text-slate-500">Franquia CHF 2500</span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5">
+              <span class="text-[11px] text-slate-400 font-medium">Tempo Robô</span>
+              <div class="text-xl font-bold text-emerald-400 mt-1 flex items-baseline justify-between">
+                <span>3m 18s</span>
+                <span class="text-[10px] text-slate-400">vs 45m</span>
+              </div>
+              <span class="text-[10px] text-slate-500">Automação 92%</span>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5">
+              <span class="text-[11px] text-slate-400 font-medium">Seguradoras</span>
+              <div class="text-xl font-bold text-white mt-1 flex items-baseline justify-between">
+                <span>8 Ativas</span>
+                <span class="text-[10px] text-emerald-400">FINMA</span>
+              </div>
+              <span class="text-[10px] text-slate-500">Swica, Helsana...</span>
+            </div>
+          </div>
+
+          <!-- Quick Interactive Quote Builder -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-lg bg-red-600/20 text-red-400 flex items-center justify-center">
+                  <i data-lucide="calculator" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-white">Simulador de Cotação de Saúde Suíça</h3>
+                  <p class="text-[11px] text-slate-400">Cálculo de prêmio obrigatório LAMal / KVG e complementar LCA</p>
+                </div>
+              </div>
+              <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">Tabelas Oficiais 2026</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs mb-4">
+              <div>
+                <label class="block text-slate-400 mb-1">Segurado / Cliente</label>
+                <select id="quote-customer" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-red-500">
+                  <option value="Thomas Keller">Thomas Keller (Zurich, 34a)</option>
+                  <option value="Anna Müller">Anna Müller (Genebra, 29a)</option>
+                  <option value="Marc Dubois">Marc Dubois (Lausanne, 42a)</option>
+                  <option value="Beatrix Zürcher">Beatrix Zürcher (Bern, 51a)</option>
+                  <option value="Patrick Rossi">Patrick Rossi (Lugano, 38a)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-slate-400 mb-1">Cantão de Residência</label>
+                <select id="quote-canton" onchange="recalculateQuotes()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-red-500">
+                  <option value="ZH">Zurique (ZH)</option>
+                  <option value="GE">Genebra (GE)</option>
+                  <option value="VD">Vaud / Lausanne (VD)</option>
+                  <option value="BE">Berna (BE)</option>
+                  <option value="BS">Basel-Stadt (BS)</option>
+                  <option value="TI">Ticino (TI)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-slate-400 mb-1">Franquia Anual (CHF)</label>
+                <select id="quote-franchise" onchange="recalculateQuotes()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-red-500">
+                  <option value="2500" selected>CHF 2'500 (Econômica)</option>
+                  <option value="1500">CHF 1'500</option>
+                  <option value="1000">CHF 1'000</option>
+                  <option value="500">CHF 500</option>
+                  <option value="300">CHF 300 (Standard)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Calculated Quotes Cards -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                <span>Prêmios Mensais Comparados</span>
+                <span>Modelo Telmed / Médico de Família</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="quotes-comparison-cards">
+                <!-- Swica -->
+                <div class="bg-slate-950 border border-slate-800 hover:border-red-500/50 rounded-xl p-3 transition flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-white text-xs">SWICA</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-mono">Top Rated</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Favorit Medpharm</p>
+                  </div>
+                  <div class="mt-3 flex items-baseline justify-between">
+                    <div>
+                      <span class="text-xs text-slate-400">CHF</span>
+                      <span class="text-base font-bold text-white font-mono" id="premium-swica">328.90</span>
+                      <span class="text-[10px] text-slate-500">/mês</span>
+                    </div>
+                    <button onclick="dispatchProposal('SWICA', 'Favorit Medpharm')" class="text-[11px] bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded transition flex items-center space-x-1">
+                      <span>Emitir</span>
+                      <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Groupe Mutuel -->
+                <div class="bg-slate-950 border border-slate-800 hover:border-red-500/50 rounded-xl p-3 transition flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-white text-xs">Groupe Mutuel</span>
+                      <span class="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono">Robô RPA</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Global Solution + LCA</p>
+                  </div>
+                  <div class="mt-3 flex items-baseline justify-between">
+                    <div>
+                      <span class="text-xs text-slate-400">CHF</span>
+                      <span class="text-base font-bold text-white font-mono" id="premium-groupe">312.40</span>
+                      <span class="text-[10px] text-slate-500">/mês</span>
+                    </div>
+                    <button onclick="dispatchProposal('Groupe Mutuel', 'Global Solution')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-1 rounded transition flex items-center space-x-1">
+                      <span>Emitir</span>
+                      <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Helsana -->
+                <div class="bg-slate-950 border border-slate-800 hover:border-red-500/50 rounded-xl p-3 transition flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-white text-xs">Helsana</span>
+                      <span class="text-[10px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-mono">LCA Completa</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-0.5">BeneFit PLUS</p>
+                  </div>
+                  <div class="mt-3 flex items-baseline justify-between">
+                    <div>
+                      <span class="text-xs text-slate-400">CHF</span>
+                      <span class="text-base font-bold text-white font-mono" id="premium-helsana">341.10</span>
+                      <span class="text-[10px] text-slate-500">/mês</span>
+                    </div>
+                    <button onclick="dispatchProposal('Helsana', 'BeneFit PLUS')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-1 rounded transition flex items-center space-x-1">
+                      <span>Emitir</span>
+                      <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Proposals Table -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+            <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+                <h3 class="text-sm font-semibold text-white">Propostas Recentes Emitidas</h3>
+              </div>
+              <span class="text-xs text-slate-400 font-mono">Tabela `offers_meta`</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 font-medium">
+                  <tr>
+                    <th class="px-4 py-2.5">ID</th>
+                    <th class="px-4 py-2.5">Cliente</th>
+                    <th class="px-4 py-2.5">Seguradora / Produto</th>
+                    <th class="px-4 py-2.5">Prêmio CHF</th>
+                    <th class="px-4 py-2.5">Status</th>
+                    <th class="px-4 py-2.5 text-right">Ação</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800" id="proposals-table-body">
+                  <tr class="hover:bg-slate-800/40 transition">
+                    <td class="px-4 py-3 font-mono text-slate-400">#TC-52</td>
+                    <td class="px-4 py-3 font-medium text-white">Marc Dubois</td>
+                    <td class="px-4 py-3 text-slate-300">Groupe Mutuel — KVG + Dental</td>
+                    <td class="px-4 py-3 font-mono font-semibold text-white">CHF 312.40</td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>Emitida (PDF)</span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <button onclick="viewPolicyModal('Marc Dubois', 'Groupe Mutuel', '312.40', 'TC-52')" class="text-red-400 hover:text-red-300 underline font-medium">Ver PDF</button>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-800/40 transition">
+                    <td class="px-4 py-3 font-mono text-slate-400">#TC-51</td>
+                    <td class="px-4 py-3 font-medium text-white">Anna Müller</td>
+                    <td class="px-4 py-3 text-slate-300">SWICA — Favorit Medpharm</td>
+                    <td class="px-4 py-3 font-mono font-semibold text-white">CHF 328.90</td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>Emitida (PDF)</span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <button onclick="viewPolicyModal('Anna Müller', 'SWICA', '328.90', 'TC-51')" class="text-red-400 hover:text-red-300 underline font-medium">Ver PDF</button>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-800/40 transition">
+                    <td class="px-4 py-3 font-mono text-slate-400">#TC-50</td>
+                    <td class="px-4 py-3 font-medium text-white">Thomas Keller</td>
+                    <td class="px-4 py-3 text-slate-300">Helsana — BeneFit PLUS</td>
+                    <td class="px-4 py-3 font-mono font-semibold text-white">CHF 341.10</td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>Emitida (PDF)</span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <button onclick="viewPolicyModal('Thomas Keller', 'Helsana', '341.10', 'TC-50')" class="text-red-400 hover:text-red-300 underline font-medium">Ver PDF</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Mobile Simulator iPhone 16 Frame (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col items-center">
+          
+          <div class="text-center mb-3">
+            <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold flex items-center justify-center space-x-1.5">
+              <span>App Mobile Anitta</span>
+              <span class="text-red-500">•</span>
+              <span class="text-slate-300">Flutter / Dart 3</span>
+            </span>
+          </div>
+
+          <!-- Smartphone Shell -->
+          <div class="w-[340px] h-[680px] bg-slate-900 rounded-[48px] p-3.5 iphone-frame border-4 border-slate-700/80 relative flex flex-col shadow-2xl">
+            
+            <!-- Side Buttons Simulation -->
+            <div class="absolute -left-[7px] top-24 w-1 h-8 bg-slate-700 rounded-l"></div>
+            <div class="absolute -left-[7px] top-36 w-1 h-12 bg-slate-700 rounded-l"></div>
+            <div class="absolute -left-[7px] top-52 w-1 h-12 bg-slate-700 rounded-l"></div>
+            <div class="absolute -right-[7px] top-32 w-1 h-16 bg-slate-700 rounded-r"></div>
+
+            <!-- Screen Container -->
+            <div class="w-full h-full bg-slate-950 rounded-[38px] overflow-hidden flex flex-col relative border border-slate-800">
+              
+              <!-- iPhone Dynamic Island & Status Bar -->
+              <div class="h-11 px-6 pt-2 flex items-center justify-between text-slate-300 text-[11px] font-medium select-none z-20">
+                <span id="phone-clock">14:30</span>
+                <!-- Dynamic Island Capsule -->
+                <div class="w-24 h-5 bg-black rounded-full flex items-center justify-center space-x-2 px-2 shadow">
+                  <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                  <span class="text-[9px] text-slate-400 font-mono">Anitta AI</span>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                  <i data-lucide="wifi" class="w-3 h-3"></i>
+                  <i data-lucide="battery" class="w-3.5 h-3.5"></i>
+                </div>
+              </div>
+
+              <!-- App Header Bar -->
+              <div class="px-4 py-2 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/60 backdrop-blur">
+                <div class="flex items-center space-x-2">
+                  <img src="images/anitta.png" alt="Anitta" class="w-7 h-7 rounded-full object-cover border border-red-500/40">
+                  <div>
+                    <h4 class="text-xs font-semibold text-white leading-tight">Anitta</h4>
+                    <p class="text-[9px] text-emerald-400 flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span>Online • de-CH / Swiss</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-1">
+                  <select id="anitta-lang" class="bg-slate-800 border border-slate-700 rounded text-[10px] text-slate-300 px-1 py-0.5">
+                    <option value="de-CH">🇨🇭 DE-CH</option>
+                    <option value="fr-CH">🇫🇷 FR-CH</option>
+                    <option value="de-DE">🇩🇪 DE</option>
+                    <option value="en-US">🇬🇧 EN</option>
+                    <option value="pt-BR">🇧🇷 PT</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Chat & Conversation Stream -->
+              <div id="phone-chat-stream" class="flex-1 p-3 space-y-3 overflow-y-auto text-xs">
+                
+                <!-- Welcome Assistant Bubble -->
+                <div class="flex items-start space-x-2">
+                  <img src="images/anitta.png" class="w-6 h-6 rounded-full mt-0.5 border border-red-500/30">
+                  <div class="bg-slate-900 border border-slate-800 text-slate-200 p-2.5 rounded-2xl rounded-tl-sm max-w-[85%] text-[11px] leading-relaxed shadow-sm">
+                    Grüezi! Eu sou a <strong>Anitta</strong>, sua assistente de seguros suíça. Posso cotar planos KVG, emitir propostas na Groupe Mutuel ou Swica e consultar apólices por voz!
+                  </div>
+                </div>
+
+                <!-- Simulation prompt hints -->
+                <div class="bg-red-950/20 border border-red-500/20 rounded-xl p-2.5 text-[10px] text-red-200/90 space-y-1">
+                  <span class="font-semibold block text-red-400 uppercase tracking-wider text-[9px]">Comandos de Voz Rápidos:</span>
+                  <div class="flex flex-wrap gap-1">
+                    <button onclick="sendPhoneVoicePrompt('Crie uma proposta KVG da Swica para Anna Müller')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded text-[10px] border border-slate-800 transition">
+                      🗣️ "Cotar Swica p/ Anna"
+                    </button>
+                    <button onclick="sendPhoneVoicePrompt('Qual a melhor cotação da Groupe Mutuel em Genebra?')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded text-[10px] border border-slate-800 transition">
+                      🗣️ "Melhor Groupe Mutuel"
+                    </button>
+                    <button onclick="sendPhoneVoicePrompt('Simular recebimento de SMS OTP da seguradora')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded text-[10px] border border-slate-800 transition">
+                      📲 "Simular SMS OTP"
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Animated Voice Waveform (Active during speech/processing) -->
+              <div id="waveform-box" class="h-12 bg-slate-950 border-t border-slate-800/80 px-4 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5 h-full">
+                  <div class="wave-bar w-1 bg-red-500 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-400 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-600 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-500 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-400 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-600 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-500 rounded-full"></div>
+                  <div class="wave-bar w-1 bg-red-400 rounded-full"></div>
+                </div>
+                <span id="speech-indicator-text" class="text-[10px] text-slate-400 font-mono">Microfone pronto</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              </div>
+
+              <!-- App Bottom Input & Voice Action -->
+              <div class="p-2.5 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2">
+                <input type="text" id="phone-text-input" placeholder="Fale ou digite para a Anitta..." class="flex-1 bg-slate-950 border border-slate-800 rounded-full px-3 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-red-500" onkeydown="if(event.key==='Enter') sendManualMessage()">
+                
+                <button onclick="toggleMicrophoneSim()" id="mic-action-btn" class="w-9 h-9 rounded-full bg-red-600 hover:bg-red-500 active:scale-95 text-white flex items-center justify-center shadow-lg transition">
+                  <i data-lucide="mic" class="w-4 h-4" id="mic-icon"></i>
+                </button>
+              </div>
+
+              <!-- In-App Navigation Tabs (Flutter style) -->
+              <div class="h-12 bg-slate-950 border-t border-slate-800/80 grid grid-cols-4 items-center text-[10px] text-slate-400 select-none">
+                <button class="flex flex-col items-center justify-center text-red-500">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  <span class="text-[9px] mt-0.5">Assistente</span>
+                </button>
+                <button onclick="switchPhoneTab('templates')" class="flex flex-col items-center justify-center hover:text-slate-200">
+                  <i data-lucide="layers" class="w-4 h-4"></i>
+                  <span class="text-[9px] mt-0.5">Templates</span>
+                </button>
+                <button onclick="switchPhoneTab('customers')" class="flex flex-col items-center justify-center hover:text-slate-200">
+                  <i data-lucide="users" class="w-4 h-4"></i>
+                  <span class="text-[9px] mt-0.5">Clientes</span>
+                </button>
+                <button onclick="switchPhoneTab('settings')" class="flex flex-col items-center justify-center hover:text-slate-200">
+                  <i data-lucide="sliders" class="w-4 h-4"></i>
+                  <span class="text-[9px] mt-0.5">Ajustes</span>
+                </button>
+              </div>
+
+              <!-- iPhone Bottom Home Bar -->
+              <div class="h-4 bg-slate-950 flex items-center justify-center pb-1">
+                <div class="w-28 h-1 bg-slate-600 rounded-full"></div>
+              </div>
+
+            </div>
+          </div>
+          
+          <p class="text-[11px] text-slate-500 mt-2 text-center">Simulador do app móvel Flutter integrado à API Sanctum</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: PAINEL WEB COMPLETO (TRUSTCORE DASHBOARD) -->
+    <!-- ======================================================== -->
+    <section id="view-dashboard" class="hidden space-y-6">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span>TrustCore Suisse — Portal Corporativo do Corretor</span>
+            <span class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded font-mono">FINMA Compliant</span>
+          </h2>
+          <p class="text-xs text-slate-400">Emissão multicanal de propostas de saúde (LAMal / LCA) para o mercado suíço.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="openNewProposalModal()" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3.5 py-2 rounded-lg font-medium flex items-center space-x-1.5 shadow-lg shadow-red-600/20 transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Nova Proposta Manual</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Swiss Insurers Coverage Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-red-600/10 border border-red-500/20 flex items-center justify-center text-xs font-bold text-red-400">SW</div>
+          <div>
+            <div class="text-xs font-bold text-white">SWICA</div>
+            <div class="text-[10px] text-emerald-400">API B2B Online</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-xs font-bold text-blue-400">GM</div>
+          <div>
+            <div class="text-xs font-bold text-white">Groupe Mutuel</div>
+            <div class="text-[10px] text-cyan-400">RPA Robot Ativo</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-xs font-bold text-purple-400">HL</div>
+          <div>
+            <div class="text-xs font-bold text-white">Helsana</div>
+            <div class="text-[10px] text-emerald-400">Tabelas 2026 OK</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-amber-600/10 border border-amber-500/20 flex items-center justify-center text-xs font-bold text-amber-400">CS</div>
+          <div>
+            <div class="text-xs font-bold text-white">CSS Kranken</div>
+            <div class="text-[10px] text-emerald-400">Webhooks OK</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-400">SA</div>
+          <div>
+            <div class="text-xs font-bold text-white">Sanitas</div>
+            <div class="text-[10px] text-slate-400">Compact One</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-600/10 border border-cyan-500/20 flex items-center justify-center text-xs font-bold text-cyan-400">VI</div>
+          <div>
+            <div class="text-xs font-bold text-white">Visana</div>
+            <div class="text-[10px] text-slate-400">Managed Care</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TrustCore Dynamic Collections (Motor DDL Blueprint) Demonstration -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="database" class="w-4 h-4 text-cyan-400"></i>
+              <span>Motor Collections do TrustCore (Criação de Campos Sem Migração)</span>
+            </h3>
+            <p class="text-xs text-slate-400">Campos adicionados na UI viram colunas SQL instantâneas via DDL on-demand.</p>
+          </div>
+          <span class="text-xs font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded">82 Collections no DB</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">Coleção Alvo</label>
+            <input type="text" readonly value="offers_meta (Propostas)" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-300 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Nome do Novo Campo</label>
+            <input type="text" id="demo-field-name" value="tax_deduction_approved" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Tipo de Dado TrustCore</label>
+            <select id="demo-field-type" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200">
+              <option value="boolean_">Boolean (Sim/Não)</option>
+              <option value="text_">Texto (Varchar)</option>
+              <option value="date_">Data (Date)</option>
+              <option value="rel_col_">Relacional (Foreign Key)</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button onclick="simulateAddField()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-1.5 rounded transition">
+              Simular Adição de Campo
+            </button>
+          </div>
+        </div>
+
+        <div id="ddl-feedback" class="mt-3 p-2 bg-slate-950 border border-slate-800 rounded text-[11px] font-mono text-slate-400 hidden">
+          SQL Executado: <span class="text-emerald-400" id="ddl-sql-text"></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 3: APP MOBILE ANITTA ISOLADO -->
+    <!-- ======================================================== -->
+    <section id="view-mobile" class="hidden space-y-6">
+      <div class="max-w-2xl mx-auto text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Anitta — Assistente Inteligente de Voz para Corretores Suíços</h2>
+        <p class="text-xs text-slate-400">Construído em Flutter & Dart, com reconhecimento fonético no dialeto suíço-alemão (de-CH), integração com OpenAI TTS neural e emissão automática de apólices.</p>
+      </div>
+
+      <div class="flex justify-center">
+        <!-- Re-use or showcase phone full center -->
+        <div class="w-[360px] bg-slate-900 rounded-[44px] p-4 border-4 border-slate-700 shadow-2xl space-y-3">
+          <div class="text-center pb-2 border-b border-slate-800">
+            <img src="images/anitta.png" class="w-14 h-14 rounded-full mx-auto border-2 border-red-500 shadow-lg">
+            <h3 class="text-base font-bold text-white mt-2">Anitta Broker Assistant</h3>
+            <p class="text-xs text-red-400">Neural Voice AI • Swisscom 5G</p>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
+            <div class="font-semibold text-white">Capacidades Implementadas:</div>
+            <ul class="space-y-1.5 text-slate-300">
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>Reconhecimento de Voz local e Multilíngue</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>Geração de Áudio com OpenAI TTS (Voz Nova)</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>Navegação por Templates de Seguradoras</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>Seleção de Clientes e Disparo de Oferta</span>
+              </li>
+            </ul>
+
+            <div class="pt-2 border-t border-slate-800 font-semibold text-amber-300">O que falta finalizar:</div>
+            <ul class="space-y-1.5 text-slate-400 text-[11px]">
+              <li class="flex items-start space-x-2">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400 mt-0.5"></i>
+                <span>Desacoplar do Firebase para autenticar 100% no Laravel Sanctum</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400 mt-0.5"></i>
+                <span>Adicionar Function/Tool Calling para criar propostas automaticamente por comando de voz puro</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400 mt-0.5"></i>
+                <span>Remover URLs hardcoded apontando para o servidor legado antigo</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-center pt-2">
+            <button onclick="switchTab('dual')" class="w-full bg-red-600 hover:bg-red-500 text-white font-medium py-2 rounded-xl text-xs transition">
+              Abrir Simulador Interativo no Cockpit Duplo
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 4: ROBÔ RPA & RELÉ DE SMS/OTP -->
+    <!-- ======================================================== -->
+    <section id="view-rpa" class="hidden space-y-6">
+      <div class="pb-3 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-red-500"></i>
+            <span>Pipeline RPA & Relé de SMS/OTP (Power Automate)</span>
+          </h2>
+          <p class="text-xs text-slate-400">Fluxo automatizado que conecta a API TrustCore aos portais externos das seguradoras suíças com bypass de 2FA via SMS.</p>
+        </div>
+        <button onclick="triggerFullRPACycle()" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3.5 py-1.5 rounded-lg font-medium flex items-center space-x-1.5 transition">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i>
+          <span>Disparar Ciclo Completo de Teste</span>
+        </button>
+      </div>
+
+      <!-- Flow Architecture Diagram -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="font-mono text-[10px]">Passo 1</span>
+            <i data-lucide="send" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <div class="font-bold text-white">TrustCore API</div>
+          <p class="text-slate-400 text-[11px]">Dispara POST com OfferID e dados do cliente para o webhook da Azure.</p>
+          <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono block text-center">Status 202 Accepted</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="font-mono text-[10px]">Passo 2</span>
+            <i data-lucide="cloud-lightning" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div class="font-bold text-white">Cloud Flow (Logic Apps)</div>
+          <p class="text-slate-400 text-[11px]">Recebe carga JSON, valida licença do corretor e despacha pro robô local.</p>
+          <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono block text-center">Azure North Switzerland</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="font-mono text-[10px]">Passo 3</span>
+            <i data-lucide="monitor" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="font-bold text-white">Robô Power Automate</div>
+          <p class="text-slate-400 text-[11px]">Abre o portal B2B da seguradora (ex: Groupe Mutuel) e inicia login.</p>
+          <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono block text-center">Windows Desktop Agent</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="font-mono text-[10px]">Passo 4</span>
+            <i data-lucide="message-square" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <div class="font-bold text-white">Relé de SMS / OTP</div>
+          <p class="text-slate-400 text-[11px]">Seguradora envia SMS com 2FA. Relé intercepta e entrega via `/api/latest-otp`.</p>
+          <span class="text-[10px] bg-purple-950/50 text-purple-300 px-2 py-0.5 rounded font-mono block text-center">Bypass 2FA Ativo</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="font-mono text-[10px]">Passo 5</span>
+            <i data-lucide="check-check" class="w-4 h-4 text-red-400"></i>
+          </div>
+          <div class="font-bold text-white">Apólice PDF Gerada</div>
+          <p class="text-slate-400 text-[11px]">Robô baixa a proposta emitida e faz upload para a API do TrustCore.</p>
+          <span class="text-[10px] bg-emerald-950/50 text-emerald-300 px-2 py-0.5 rounded font-mono block text-center">Webhook Concluído</span>
+        </div>
+      </div>
+
+      <!-- Live Interactive Terminal & SMS Simulator -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Live Robot Console (7 cols) -->
+        <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden font-mono text-xs">
+          <div class="bg-slate-900 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span class="text-slate-400 text-[11px] ml-2">Console em Tempo Real do RPA Robot</span>
+            </div>
+            <button onclick="clearRPALogs()" class="text-[11px] text-slate-500 hover:text-slate-300">Limpar</button>
+          </div>
+          <div class="p-4 h-72 overflow-y-auto space-y-1.5 text-slate-300" id="rpa-log-terminal">
+            <div class="text-slate-500">[14:28:10] RPA Robot Gateway inicializado na máquina suíça (Host: CH-AGENT-01).</div>
+            <div class="text-slate-500">[14:28:12] Conexão com API TrustCore verificada (Status: 200 OK).</div>
+            <div class="text-cyan-400">[14:29:00] Endpoint /api/incoming/sms ouvindo mensagens de webhook de telefonia.</div>
+            <div class="text-emerald-400">[14:30:00] Sistema pronto para execução de propostas em lote.</div>
+          </div>
+        </div>
+
+        <!-- Interactive SMS/OTP Tester (5 cols) -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="smartphone" class="w-4 h-4 text-red-500"></i>
+              <span>Simulador de Recepção de SMS / OTP</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Envie uma mensagem simulando o 2FA enviado pela seguradora suíça para o robô desbloquear o portal.</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-400 mb-1">Remetente (Seguradora)</label>
+              <input type="text" id="sms-sender" value="GroupeMutuel" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200">
+            </div>
+
+            <div>
+              <label class="block text-slate-400 mb-1">Conteúdo da Mensagem SMS</label>
+              <textarea id="sms-content" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200 font-mono text-[11px]">Votre code de securite Groupe Mutuel est: 849201. Valable pendant 5 minutes.</textarea>
+            </div>
+
+            <button onclick="simulateIncomingSMS()" class="w-full bg-red-600 hover:bg-red-500 text-white font-medium py-2 rounded-lg transition flex items-center justify-center space-x-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Simular Envio p/ /api/incoming/sms</span>
+            </button>
+
+            <div id="sms-otp-result" class="p-3 bg-slate-950 border border-slate-800 rounded-lg text-slate-300 font-mono text-[11px] hidden">
+              <div>Código OTP Extraído: <span class="text-emerald-400 font-bold" id="sms-otp-extracted">849201</span></div>
+              <div class="text-slate-500 text-[10px] mt-1">Endpoint /api/latest-otp respondeu com sucesso ao robô.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 5: GUIA & ANÁLISE DE DEPLOY NO RAILWAY -->
+    <!-- ======================================================== -->
+    <section id="view-railway" class="hidden space-y-6">
+      <div class="pb-3 border-b border-slate-800">
+        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+          <i data-lucide="cloud" class="w-5 h-5 text-red-500"></i>
+          <span>Viabilidade & Arquitetura de Deploy no Railway</span>
+        </h2>
+        <p class="text-xs text-slate-400">Diagnóstico técnico completo sobre como hospedar o TrustCore no Railway com o que já existe no repositório.</p>
+      </div>
+
+      <!-- Verdict Banner -->
+      <div class="p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-xl flex items-start space-x-3">
+        <div class="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 mt-0.5">
+          <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-emerald-300">Totalmente Viável e Pronto para Deploy no Railway!</h3>
+          <p class="text-xs text-slate-300 mt-1">O ecossistema do <strong>TrustCore (Laravel 11 + MySQL 8 + Painel)</strong> pode ser hospedado imediatamente no Railway. Já criamos os arquivos de configuração necessários (<code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">backend/Dockerfile</code>, <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">backend/railway.json</code> e <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">docker-compose.yml</code>).</p>
+        </div>
+      </div>
+
+      <!-- Component-by-Component Topology Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-800 font-bold text-sm text-white">
+          Mapeamento dos Componentes no Railway
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 font-medium">
+            <tr>
+              <th class="px-4 py-2.5">Componente</th>
+              <th class="px-4 py-2.5">Tecnologia</th>
+              <th class="px-4 py-2.5">Onde Roda no Railway</th>
+              <th class="px-4 py-2.5">Status de Prontidão</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-semibold text-white">Banco de Dados</td>
+              <td class="px-4 py-3 text-slate-300">MySQL 8 (InnoDB)</td>
+              <td class="px-4 py-3 text-cyan-400">Plugin MySQL Oficial do Railway</td>
+              <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-medium">100% Pronto (Dump 97 tabelas pronto)</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-semibold text-white">Backend REST API</td>
+              <td class="px-4 py-3 text-slate-300">Laravel 11 / PHP 8.2+</td>
+              <td class="px-4 py-3 text-cyan-400">Container Dockerfile (PHP-FPM + Nginx)</td>
+              <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-medium">100% Configurado (Dockerfile criado)</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-semibold text-white">Painel do Corretor</td>
+              <td class="px-4 py-3 text-slate-300">Angular 15.2 / Nebular</td>
+              <td class="px-4 py-3 text-cyan-400">Serviço Nginx Estático no Railway / Vercel</td>
+              <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-medium">Pronto p/ compilação</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-semibold text-white">Robô Power Automate</td>
+              <td class="px-4 py-3 text-slate-300">RPA Desktop + Cloud Flow</td>
+              <td class="px-4 py-3 text-amber-400">Roda em Máquina/VPS Windows (conecta na API Railway)</td>
+              <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-medium">Híbrido (Desktop externo ➔ API Railway)</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-semibold text-white">App Mobile Anitta</td>
+              <td class="px-4 py-3 text-slate-300">Flutter / Dart (iOS/Android)</td>
+              <td class="px-4 py-3 text-blue-400">Roda no smartphone dos corretores (conecta na API Railway)</td>
+              <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-medium">Ajustes de API e Function Calling</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Railway Step-by-Step Guide -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+          <h4 class="font-bold text-white flex items-center space-x-2">
+            <span class="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px]">1</span>
+            <span>Passo a Passo de Inicialização no Railway</span>
+          </h4>
+          <ol class="space-y-2 text-slate-300 list-decimal list-inside leading-relaxed">
+            <li>Acesse o <strong>Railway.app</strong> e crie um novo projeto vazio.</li>
+            <li>Adicione o serviço <strong>MySQL Database</strong> (fornece host, usuário, porta e senha).</li>
+            <li>Importe o dump oficial: <br><code class="bg-slate-950 px-2 py-1 rounded text-cyan-300 font-mono block mt-1">mysql -h [MYSQL_HOST] -u [MYSQL_USER] -p [MYSQL_DATABASE] &lt; database/TrustcoreDB.sql</code></li>
+            <li>Conecte este repositório Git ao Railway e aponte para a pasta raiz <code class="bg-slate-950 px-1 py-0.5 rounded text-slate-200">/backend</code>. O Railway detectará o <code class="text-cyan-300">Dockerfile</code> automaticamente!</li>
+          </ol>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+          <h4 class="font-bold text-white flex items-center space-x-2">
+            <span class="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px]">2</span>
+            <span>Variáveis de Ambiente Recomendadas (.env no Railway)</span>
+          </h4>
+          <div class="space-y-1 font-mono text-[11px] text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800">
+            <div><span class="text-red-400">APP_NAME</span>=TrustCoreSuisse</div>
+            <div><span class="text-red-400">APP_ENV</span>=production</div>
+            <div><span class="text-red-400">APP_KEY</span>=base64:3l+oO2p8wR5Q7u2Qk3gYh9Fm7yU8e1N+2r1A4b5C6D=</div>
+            <div><span class="text-red-400">DB_CONNECTION</span>=mysql</div>
+            <div><span class="text-red-400">DB_HOST</span>=${{MySQL.MYSQLHOST}}</div>
+            <div><span class="text-red-400">DB_PORT</span>=${{MySQL.MYSQLPORT}}</div>
+            <div><span class="text-red-400">DB_DATABASE</span>=${{MySQL.MYSQLDATABASE}}</div>
+            <div><span class="text-red-400">DB_USERNAME</span>=${{MySQL.MYSQLUSER}}</div>
+            <div><span class="text-red-400">DB_PASSWORD</span>=${{MySQL.MYSQLPASSWORD}}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: SWISS HEALTH INSURANCE POLICY PREVIEW (PDF MOCK) -->
+  <!-- ======================================================== -->
+  <div id="policy-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
+      <button onclick="closePolicyModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center space-x-3 pb-3 border-b border-slate-800">
+        <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg">🇨🇭</div>
+        <div>
+          <h3 class="text-base font-bold text-white">Apólice de Seguro de Saúde Emitida (Suíça)</h3>
+          <p class="text-xs text-slate-400">Documento Oficial Gerado pelo Robô RPA • FINMA Regulated</p>
+        </div>
+      </div>
+
+      <!-- Swiss Policy Layout Simulation -->
+      <div class="bg-white text-slate-900 p-5 rounded-xl space-y-4 font-sans text-xs border border-slate-200 shadow-inner">
+        
+        <!-- Header Insurer & Client -->
+        <div class="flex justify-between items-start border-b border-slate-200 pb-3">
+          <div>
+            <h4 class="font-extrabold text-base tracking-tight text-red-600 uppercase" id="modal-insurer-name">SWICA Krankenversicherung AG</h4>
+            <p class="text-[10px] text-slate-500">Römerstrasse 38, 8401 Winterthur • Suisse</p>
+            <p class="text-[10px] text-slate-500 font-mono mt-1">Police Nr: <span class="font-bold text-slate-900" id="modal-policy-number">CH-2026-8942-TC</span></p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded">ORIGINAL (PDF)</span>
+            <p class="text-[10px] text-slate-500 mt-1">Data de Emissão: <span id="modal-policy-date">06.11.2026</span></p>
+          </div>
+        </div>
+
+        <!-- Insured Person Details -->
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <div>
+            <span class="text-[10px] text-slate-500 block uppercase font-semibold">Segurado Principal</span>
+            <div class="font-bold text-sm text-slate-900" id="modal-client-name">Marc Dubois</div>
+            <div class="text-[11px] text-slate-600">Cantão de Tributação: <span class="font-semibold text-slate-900">Zurique (ZH)</span></div>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-500 block uppercase font-semibold">Corretor Responsável</span>
+            <div class="font-bold text-sm text-slate-900">TrustCore Broker Service</div>
+            <div class="text-[11px] text-slate-600">Registro FINMA: <span class="font-mono font-semibold text-slate-900">F-392019</span></div>
+          </div>
+        </div>
+
+        <!-- Coverage & Pricing Table -->
+        <table class="w-full text-left text-xs border border-slate-200 rounded">
+          <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+            <tr>
+              <th class="p-2">Cobertura Contratada</th>
+              <th class="p-2">Franquia Anual</th>
+              <th class="p-2">Modelo de Cuidados</th>
+              <th class="p-2 text-right">Prêmio Mensal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="p-2 font-medium">LAMal / KVG (Obrigatório)</td>
+              <td class="p-2 font-mono">CHF 2'500</td>
+              <td class="p-2">Telmed / Hausarzt</td>
+              <td class="p-2 text-right font-mono font-bold" id="modal-policy-price">CHF 312.40</td>
+            </tr>
+            <tr>
+              <td class="p-2 font-medium">LCA / VVG (Complementar Ambulatório)</td>
+              <td class="p-2 font-mono">CHF 0</td>
+              <td class="p-2">Livre Escolha Suíça</td>
+              <td class="p-2 text-right font-mono font-bold">CHF 16.50</td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-slate-50 font-bold border-t border-slate-200 text-slate-900">
+            <tr>
+              <td colspan="3" class="p-2 text-right">Total Prêmio Mensal:</td>
+              <td class="p-2 text-right font-mono text-red-600 text-sm" id="modal-policy-total">CHF 328.90</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Swiss QR-Bill (QR-Rechnung) Payment Mockup -->
+        <div class="border-t-2 border-dashed border-slate-300 pt-3 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <!-- Simulated QR Code -->
+            <div class="w-16 h-16 bg-slate-900 rounded p-1 flex items-center justify-center text-[8px] text-white font-mono text-center">
+              <span>QR-BILL<br>CH-SWISS<br>+</span>
+            </div>
+            <div class="text-[10px] text-slate-600 leading-tight">
+              <span class="font-bold text-slate-900 block">QR-Rechnung (Fatura Suíça)</span>
+              <span>Conta / IBAN: CH89 0023 0000 1093 8492 1</span><br>
+              <span>Referência: RF18 5390 2849 0184 92</span>
+            </div>
+          </div>
+          <span class="text-[10px] text-emerald-700 bg-emerald-100 font-bold px-2 py-1 rounded">DOCUMENTO VÁLIDO</span>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-between items-center pt-2">
+        <span class="text-[11px] text-slate-400">Arquivo salvo no backend: <code class="font-mono text-cyan-400">/storage/offers/TC-52_swica_signed.pdf</code></span>
+        <button onclick="closePolicyModal()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-4 py-2 rounded-lg font-medium transition">
+          Fechar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Sound toggle state
+    let voiceAudioEnabled = true;
+
+    // Clock simulation (Zurich CET)
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('de-CH', { hour12: false });
+      document.getElementById('zurich-clock').innerText = timeStr;
+      const phoneClock = document.getElementById('phone-clock');
+      if (phoneClock) {
+        phoneClock.innerText = timeStr.substring(0, 5);
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Tab switcher
+    function switchTab(tabName) {
+      const tabs = ['dual', 'dashboard', 'mobile', 'rpa', 'railway'];
+      tabs.forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
+        const btnEl = document.getElementById(`tab-btn-${t}`);
+        if (viewEl) viewEl.classList.add('hidden');
+        if (btnEl) {
+          btnEl.classList.remove('bg-red-600', 'text-white', 'shadow');
+          btnEl.classList.add('text-slate-400');
+        }
+      });
+
+      const activeView = document.getElementById(`view-${tabName}`);
+      const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('bg-red-600', 'text-white', 'shadow');
+      }
+
+      // Re-trigger lucide icons
+      lucide.createIcons();
+    }
+
+    // Toggle speech audio
+    function toggleVoiceAudio() {
+      voiceAudioEnabled = !voiceAudioEnabled;
+      const label = document.getElementById('audio-status-label');
+      const icon = document.getElementById('audio-icon');
+      if (voiceAudioEnabled) {
+        label.innerText = 'Voz Ativada';
+        icon.classList.remove('text-slate-500');
+        icon.classList.add('text-emerald-400');
+      } else {
+        label.innerText = 'Mudo';
+        icon.classList.remove('text-emerald-400');
+        icon.classList.add('text-slate-500');
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+      }
+    }
+
+    // Speak response using Web Speech Synthesis
+    function speakText(text, lang = 'pt-BR') {
+      if (!voiceAudioEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Dynamic Insurance calculation based on Canton & Franchise
+    function recalculateQuotes() {
+      const canton = document.getElementById('quote-canton').value;
+      const franchise = parseInt(document.getElementById('quote-franchise').value);
+
+      // Swiss health insurance canton cost index
+      const cantonMultiplier = {
+        'ZH': 1.0,
+        'GE': 1.18, // Geneva is traditionally highest
+        'VD': 1.12,
+        'BS': 1.15,
+        'BE': 1.04,
+        'TI': 1.08
+      }[canton] || 1.0;
+
+      // Base premium at CHF 2500 franchise
+      const baseSwica = 328.90;
+      const baseGroupe = 312.40;
+      const baseHelsana = 341.10;
+
+      // Deductible discount delta
+      const franchiseFactor = {
+        2500: 1.0,
+        1500: 1.12,
+        1000: 1.20,
+        500: 1.28,
+        300: 1.35
+      }[franchise] || 1.0;
+
+      const swicaPrice = (baseSwica * cantonMultiplier * franchiseFactor).toFixed(2);
+      const groupePrice = (baseGroupe * cantonMultiplier * franchiseFactor).toFixed(2);
+      const helsanaPrice = (baseHelsana * cantonMultiplier * franchiseFactor).toFixed(2);
+
+      document.getElementById('premium-swica').innerText = swicaPrice;
+      document.getElementById('premium-groupe').innerText = groupePrice;
+      document.getElementById('premium-helsana').innerText = helsanaPrice;
+    }
+
+    // Trigger proposal dispatch
+    let offerCounter = 53;
+    function dispatchProposal(insurer, product) {
+      const customer = document.getElementById('quote-customer').value;
+      const canton = document.getElementById('quote-canton').value;
+      const franchise = document.getElementById('quote-franchise').value;
+      
+      let price = '328.90';
+      if (insurer === 'SWICA') price = document.getElementById('premium-swica').innerText;
+      if (insurer === 'Groupe Mutuel') price = document.getElementById('premium-groupe').innerText;
+      if (insurer === 'Helsana') price = document.getElementById('premium-helsana').innerText;
+
+      const offerId = `TC-${offerCounter++}`;
+
+      // 1. Add log to RPA terminal
+      addRPALog(`[${new Date().toLocaleTimeString()}] NOVA PROPOSTA #${offerId}: Cliente ${customer} (${canton}) -> ${insurer} (${product}) CHF ${price}/m.`);
+      addRPALog(`[${new Date().toLocaleTimeString()}] Webhook acionado: POST /workflows/c0647... (Azure Logic Apps).`);
+      addRPALog(`[${new Date().toLocaleTimeString()}] Robô RPA iniciado. Acessando portal B2B da ${insurer}...`);
+
+      // 2. Add row to table
+      const tbody = document.getElementById('proposals-table-body');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-800/40 transition bg-red-950/20';
+      tr.innerHTML = `
+        <td class="px-4 py-3 font-mono text-cyan-400 font-bold">#${offerId}</td>
+        <td class="px-4 py-3 font-medium text-white">${customer}</td>
+        <td class="px-4 py-3 text-slate-300">${insurer} — ${product}</td>
+        <td class="px-4 py-3 font-mono font-semibold text-emerald-400">CHF ${price}</td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" id="status-${offerId}">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Robô em Execução</span>
+          </span>
+        </td>
+        <td class="px-4 py-3 text-right">
+          <button onclick="viewPolicyModal('${customer}', '${insurer}', '${price}', '${offerId}')" class="text-slate-400 hover:text-white underline font-medium">Ver PDF</button>
+        </td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+
+      // Update count
+      const countEl = document.getElementById('metric-offers-count');
+      if (countEl) countEl.innerText = parseInt(countEl.innerText) + 1;
+
+      // Simulate robot progression
+      setTimeout(() => {
+        addRPALog(`[${new Date().toLocaleTimeString()}] Robô preencheu dados no portal da ${insurer}. Desafio 2FA solicitado!`);
+        simulateIncomingSMS(insurer);
+      }, 1600);
+
+      setTimeout(() => {
+        const statusBadge = document.getElementById(`status-${offerId}`);
+        if (statusBadge) {
+          statusBadge.className = 'inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Emitida (PDF)</span>`;
+        }
+        addRPALog(`[${new Date().toLocaleTimeString()}] Apólice oficial gerada com sucesso! PDF anexado à proposta #${offerId}.`);
+      }, 4000);
+    }
+
+    // Simulate SMS Relay
+    function simulateIncomingSMS(company = 'GroupeMutuel') {
+      const code = Math.floor(100000 + Math.random() * 900000);
+      const text = `Votre code de verification ${company} est: ${code}. Valable 5 minutes.`;
+      
+      const contentEl = document.getElementById('sms-content');
+      if (contentEl) contentEl.value = text;
+
+      const resBox = document.getElementById('sms-otp-result');
+      const otpExtracted = document.getElementById('sms-otp-extracted');
+      if (resBox && otpExtracted) {
+        resBox.classList.remove('hidden');
+        otpExtracted.innerText = code;
+      }
+
+      addRPALog(`[${new Date().toLocaleTimeString()}] [SMS-RELAY] POST /api/incoming/sms recebido de +41 79 000 00 00: "${text}"`);
+      addRPALog(`[${new Date().toLocaleTimeString()}] [SMS-RELAY] OTP detectado pelo regex: [${code}]. Gravado no cache.`);
+      addRPALog(`[${new Date().toLocaleTimeString()}] [RPA-ROBOT] GET /api/latest-otp ➔ Retornou código ${code}. Login 2FA concluído!`);
+    }
+
+    // Console logging helper
+    function addRPALog(msg) {
+      const terminal = document.getElementById('rpa-log-terminal');
+      if (!terminal) return;
+      const line = document.createElement('div');
+      if (msg.includes('SMS-RELAY')) {
+        line.className = 'text-purple-400';
+      } else if (msg.includes('NOVA PROPOSTA') || msg.includes('sucesso')) {
+        line.className = 'text-emerald-400';
+      } else if (msg.includes('Robô')) {
+        line.className = 'text-cyan-300';
+      } else {
+        line.className = 'text-slate-300';
+      }
+      line.innerText = msg;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function clearRPALogs() {
+      const terminal = document.getElementById('rpa-log-terminal');
+      if (terminal) terminal.innerHTML = '<div class="text-slate-500">Console limpo.</div>';
+    }
+
+    // Modal Policy
+    function viewPolicyModal(client, insurer, price, id) {
+      document.getElementById('modal-client-name').innerText = client;
+      document.getElementById('modal-insurer-name').innerText = insurer.toUpperCase() + ' KRANKENVERSICHERUNG AG';
+      document.getElementById('modal-policy-number').innerText = `CH-2026-${id}`;
+      document.getElementById('modal-policy-price').innerText = `CHF ${price}`;
+      document.getElementById('modal-policy-total').innerText = `CHF ${price}`;
+      document.getElementById('modal-policy-date').innerText = new Date().toLocaleDateString('de-CH');
+      document.getElementById('policy-modal').classList.remove('hidden');
+    }
+
+    function closePolicyModal() {
+      document.getElementById('policy-modal').classList.add('hidden');
+    }
+
+    // Anitta Mobile Chat System
+    function appendPhoneMessage(role, text) {
+      const container = document.getElementById('phone-chat-stream');
+      const msgDiv = document.createElement('div');
+      
+      if (role === 'user') {
+        msgDiv.className = 'flex justify-end';
+        msgDiv.innerHTML = `
+          <div class="bg-red-600 text-white p-2.5 rounded-2xl rounded-tr-sm max-w-[85%] text-[11px] leading-relaxed shadow-sm">
+            ${text}
+          </div>
+        `;
+      } else {
+        msgDiv.className = 'flex items-start space-x-2';
+        msgDiv.innerHTML = `
+          <img src="images/anitta.png" class="w-6 h-6 rounded-full mt-0.5 border border-red-500/30">
+          <div class="bg-slate-900 border border-slate-800 text-slate-200 p-2.5 rounded-2xl rounded-tl-sm max-w-[85%] text-[11px] leading-relaxed shadow-sm">
+            ${text}
+          </div>
+        `;
+      }
+      
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendPhoneVoicePrompt(promptText) {
+      appendPhoneMessage('user', promptText);
+      processAnittaAI(promptText);
+    }
+
+    function sendManualMessage() {
+      const input = document.getElementById('phone-text-input');
+      const val = input.value.trim();
+      if (!val) return;
+      input.value = '';
+      appendPhoneMessage('user', val);
+      processAnittaAI(val);
+    }
+
+    // Mic Button Sim
+    let isListening = false;
+    function toggleMicrophoneSim() {
+      isListening = !isListening;
+      const micBtn = document.getElementById('mic-action-btn');
+      const indicator = document.getElementById('speech-indicator-text');
+      
+      if (isListening) {
+        micBtn.classList.add('glow-red', 'scale-110');
+        indicator.innerText = 'Escutando você... (fale agora)';
+        indicator.classList.remove('text-slate-400');
+        indicator.classList.add('text-red-400');
+
+        setTimeout(() => {
+          if (isListening) {
+            toggleMicrophoneSim();
+            sendPhoneVoicePrompt('Anitta, crie uma proposta KVG da Swica para Anna Müller');
+          }
+        }, 2200);
+      } else {
+        micBtn.classList.remove('glow-red', 'scale-110');
+        indicator.innerText = 'Microfone pronto';
+        indicator.classList.remove('text-red-400');
+        indicator.classList.add('text-slate-400');
+      }
+    }
+
+    // Process Anitta Response & Trigger Real Action
+    function processAnittaAI(prompt) {
+      const lower = prompt.toLowerCase();
+      let response = '';
+
+      if (lower.includes('swica') || lower.includes('anna')) {
+        response = "Com certeza! Consultei os parâmetros cantonais de Zurique. Criei a proposta KVG na SWICA com franquia de CHF 2'500 para Anna Müller pelo valor de CHF 328.90/mês. Já enviei para o robô RPA!";
+        speakText(response, 'pt-BR');
+        appendPhoneMessage('assistant', response);
+        // Trigger live action
+        dispatchProposal('SWICA', 'Favorit Medpharm');
+      } 
+      else if (lower.includes('groupe') || lower.includes('genebra') || lower.includes('melhor')) {
+        response = "Em Genebra, o plano com melhor custo-benefício familiar é a Groupe Mutuel (Global Solution) por CHF 312.40/mês. Deseja que eu emita a apólice agora?";
+        speakText(response, 'pt-BR');
+        appendPhoneMessage('assistant', response);
+      }
+      else if (lower.includes('sms') || lower.includes('otp')) {
+        simulateIncomingSMS();
+        response = "Simulei a chegada do SMS de 2 fatores da seguradora! O código foi capturado pelo relé e repassado para o robô continuar o login.";
+        speakText(response, 'pt-BR');
+        appendPhoneMessage('assistant', response);
+      }
+      else {
+        response = `Entendido! Analisei sua solicitação ("${prompt}"). Verifiquei as tabelas da FINMA para 2026 e os dados já estão sincronizados com o TrustCore.`;
+        speakText(response, 'pt-BR');
+        appendPhoneMessage('assistant', response);
+      }
+    }
+
+    // DDL Dynamic Field Simulation
+    function simulateAddField() {
+      const fieldName = document.getElementById('demo-field-name').value.trim();
+      const fieldType = document.getElementById('demo-field-type').value;
+      const sqlBox = document.getElementById('ddl-feedback');
+      const sqlText = document.getElementById('ddl-sql-text');
+
+      if (!fieldName) return;
+      const fullColName = `${fieldType}${fieldName}`;
+      const sql = `ALTER TABLE \`offers_meta\` ADD COLUMN \`${fullColName}\` VARCHAR(255) NULL AFTER \`updated_at\`;`;
+      
+      sqlBox.classList.remove('hidden');
+      sqlText.innerText = sql;
+      addRPALog(`[${new Date().toLocaleTimeString()}] [DDL-ENGINE] Motor Collections executou: ${sql}`);
+    }
+
+    // Quick Scenarios
+    function triggerQuickScenario(type) {
+      if (type === 'swica') {
+        sendPhoneVoicePrompt('Crie uma proposta KVG da Swica para Anna Müller');
+      } else {
+        sendPhoneVoicePrompt('Qual a melhor cotação da Groupe Mutuel em Genebra?');
+      }
+    }
+
+    function switchPhoneTab(tab) {
+      appendPhoneMessage('assistant', `Navegando para aba [${tab.toUpperCase()}]. Listando registros sincronizados com a API.`);
+    }
+
+    function triggerFullRPACycle() {
+      dispatchProposal('Groupe Mutuel', 'Global Solution');
+    }
+  </script>
+</body>
+</html>

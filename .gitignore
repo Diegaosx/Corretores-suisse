@@ -1,0 +1,44 @@
+# Environment files
+.env
+.env.backup
+.env.production
+*.env
+
+# Laravel
+backend/vendor/
+backend/storage/*.key
+backend/storage/app/public/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/bootstrap/cache/*
+
+# Node & Angular
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+.npm
+npm-debug.log*
+
+# Flutter & Dart
+mobile-anitta/.dart_tool/
+mobile-anitta/.flutter-plugins
+mobile-anitta/.flutter-plugins-dependencies
+mobile-anitta/.packages
+mobile-anitta/build/
+mobile-anitta/android/.gradle
+mobile-anitta/ios/Pods/
+mobile-anitta/ios/.symlinks/
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.user
+
+# Backups compactados originais
+TrustCore/
