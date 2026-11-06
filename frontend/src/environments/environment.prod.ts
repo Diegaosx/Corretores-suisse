@@ -5,7 +5,7 @@
  */
 export const environment = {
   production: true,
-  baseEndpoint: 'https://trustcore.ch/trustcore/trustcore-backend/public/api/',
-  backendbaseEndpoint: 'https://trustcore.ch/trustcore/trustcore-backend/public/',
-  baseurl: 'https://trustcore.ch',
+  baseEndpoint: 'https://backend-production-480a2.up.railway.app/api/',
+  backendbaseEndpoint: 'https://backend-production-480a2.up.railway.app/',
+  baseurl: 'https://backend-production-480a2.up.railway.app',
 };
